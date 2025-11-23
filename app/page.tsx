@@ -6,7 +6,7 @@ export default function Home() {
     <main className="flex min-h-screen flex-col">
       <Hero />
 
-      <section id="schedule" className="py-8 md:py-12">
+      <section id="schedule" className="py-4 md:py-6">
         <div className="container px-4 md:px-6 max-w-6xl">
           <EventSchedule />
         </div>

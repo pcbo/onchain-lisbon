@@ -2,14 +2,14 @@ import { Calendar, MapPin } from "lucide-react"
 
 export function Hero() {
   return (
-    <section className="relative w-full py-24 md:py-32 lg:py-40 overflow-hidden bg-background">
+    <section className="relative w-full py-12 md:py-16 lg:py-20 overflow-hidden bg-background">
       {/* Abstract Background Pattern */}
       <div className="absolute inset-0 z-0 opacity-10">
         <div className="absolute inset-0 bg-[radial-gradient(#374151_1px,transparent_1px)] [background-size:24px_24px]" />
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
       </div>
 
-      <div className="container relative z-10 mx-auto px-4 md:px-6">
+      <div className="container relative z-10 mx-auto px-6">
         <div className="flex flex-col gap-8 max-w-4xl">
           <div className="flex flex-wrap items-center gap-4 text-primary font-mono text-sm tracking-widest uppercase">
             <span className="flex items-center gap-2">

@@ -85,15 +85,15 @@ const getDayDate = (dayName: string) => {
   return dayMap[dayName]
 }
 
-const getFullDate = (date: string) => {
-  const dateObj = new Date(date)
-  const day = dateObj.getDate()
-  return `${day} July`
+const getFullDate = (dateStr: string, dayName: string) => {
+  const dateObj = new Date(dateStr)
+  const day = dateObj.getUTCDate()
+  return `${dayName}, ${day} July`
 }
 
 export function EventSchedule() {
   return (
-    <div className="space-y-12">
+    <div className="space-y-12 px-6">
       {DAYS.map((day) => {
         const dayEvents = EVENTS.filter((e) => e.day === day)
         return (
@@ -114,10 +114,9 @@ export function EventSchedule() {
                     key={event.id}
                     className="group flex flex-col md:flex-row gap-6 p-6 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
                   >
-                    <div className="flex flex-col gap-1 md:w-32 shrink-0 md:border-r md:border-border/50 md:pr-6">
-                      <div className="text-sm text-muted-foreground">
-                        {getFullDate(event.date)}, {event.time}
-                      </div>
+                    <div className="flex flex-col gap-1 md:w-48 shrink-0 md:border-r md:border-border/50 md:pr-6">
+                      <div className="text-sm font-medium text-foreground">{getFullDate(event.date, event.day)}</div>
+                      <div className="text-sm text-muted-foreground">{event.time}</div>
                     </div>
 
                     <div className="flex-1 space-y-3">
