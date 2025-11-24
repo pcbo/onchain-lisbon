@@ -59,8 +59,30 @@ export function EventSchedule() {
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [lisbonOffset, setLisbonOffset] = useState<string>("")
 
   useEffect(() => {
+    const calculateLisbonOffset = () => {
+      const date = new Date()
+      const lisbonTime = new Intl.DateTimeFormat("en-US", {
+        timeZone: "Europe/Lisbon",
+        timeZoneName: "shortOffset",
+      }).format(date)
+
+      const offsetMatch = lisbonTime.match(/GMT([+-]\d+)/)
+      if (offsetMatch) {
+        const offset = offsetMatch[1]
+        setLisbonOffset(`UTC${offset}`)
+      } else {
+        const lisbonDate = new Date(date.toLocaleString("en-US", { timeZone: "Europe/Lisbon" }))
+        const utcDate = new Date(date.toLocaleString("en-US", { timeZone: "UTC" }))
+        const offsetHours = Math.round((lisbonDate.getTime() - utcDate.getTime()) / (1000 * 60 * 60))
+        setLisbonOffset(`UTC${offsetHours >= 0 ? "+" : ""}${offsetHours}`)
+      }
+    }
+
+    calculateLisbonOffset()
+
     fetch("/api/events")
       .then((res) => res.json())
       .then((data) => {
@@ -103,7 +125,6 @@ export function EventSchedule() {
       const startDate = new Date(e.startDateTime)
       const july20 = new Date("2026-07-20T00:00:00")
 
-      // If event starts before Jul 20, reassign it to Jul 20
       if (startDate < july20) {
         return {
           ...e,
@@ -115,6 +136,10 @@ export function EventSchedule() {
 
   return (
     <div className="space-y-12 px-6">
+      <p className="text-sm text-muted-foreground mb-4">
+        All times are shown in local Lisbon timezone ({lisbonOffset || "UTC+0/+1"}).
+      </p>
+
       {DAYS.map((day) => {
         const dayEvents = filteredEvents.filter((e) => getDayFromDate(e.date) === day)
 
