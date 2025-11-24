@@ -1,6 +1,11 @@
+"use client"
+
 import { Calendar, MapPin } from "lucide-react"
+import { useState } from "react"
 
 export function Hero() {
+  const [isHovered, setIsHovered] = useState(false)
+
   return (
     <section className="relative w-full py-12 md:py-16 lg:py-20 overflow-hidden bg-background">
       {/* Abstract Background Pattern */}
@@ -26,7 +31,33 @@ export function Hero() {
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-foreground leading-[1.1]">
             THE ONCHAIN <br />
             BUILDER WEEK <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">IN LISBON</span>
+            <span
+              className="inline-block cursor-default relative"
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+            >
+              IN{" "}
+              <span className="relative inline-block">
+                {/* LISBON text */}
+                <span
+                  className={`inline-block transition-all duration-1000 ease-in-out ${
+                    isHovered ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"
+                  }`}
+                  style={{ position: isHovered ? "absolute" : "relative", left: 0, top: 0 }}
+                >
+                  LISBON
+                </span>
+                {/* Lisboa text */}
+                <span
+                  className={`inline-block transition-all duration-1000 ease-in-out ${
+                    isHovered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+                  }`}
+                  style={{ position: isHovered ? "relative" : "absolute", left: 0, top: 0 }}
+                >
+                  Lisboa
+                </span>
+              </span>
+            </span>
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl leading-relaxed text-balance">
