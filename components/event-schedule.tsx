@@ -1,74 +1,20 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { MapPin } from "lucide-react"
+import { MapPin, ExternalLink } from "lucide-react"
+import { useEffect, useState } from "react"
 
-// Mock Data
-const EVENTS = [
-  {
-    id: 1,
-    title: "Lisbon Builder Kickoff",
-    date: "2026-07-20",
-    day: "Monday",
-    time: "18:00 - 22:00",
-    location: "Time Out Market",
-    description: "The official opening party for Onchain Lisbon Week. Food, drinks, and networking.",
-  },
-  {
-    id: 2,
-    title: "Zero Knowledge Summit",
-    date: "2026-07-21",
-    day: "Tuesday",
-    time: "09:00 - 17:00",
-    location: "Convento do Beato",
-    description: "A deep dive into ZK proofs, privacy scaling, and protocol design.",
-  },
-  {
-    id: 3,
-    title: "DeFi Breakfast Club",
-    date: "2026-07-22",
-    day: "Wednesday",
-    time: "08:30 - 10:30",
-    location: "Copenhagen Coffee Lab",
-    description: "Start your day with coffee and casual DeFi conversations.",
-  },
-  {
-    id: 4,
-    title: "Modular Systems Workshop",
-    date: "2026-07-23",
-    day: "Thursday",
-    time: "14:00 - 16:00",
-    location: "Impact Hub Lisbon",
-    description: "Hands-on workshop on building modular stacks with Celestia and EigenLayer.",
-  },
-  {
-    id: 5,
-    title: "NFT & Art Gallery Opening",
-    date: "2026-07-24",
-    day: "Friday",
-    time: "19:00 - 23:00",
-    location: "Underdogs Gallery",
-    description: "Showcasing the best Onchain generative art from local and global artists.",
-  },
-  {
-    id: 6,
-    title: "DAO Governance Roundtable",
-    date: "2026-07-25",
-    day: "Saturday",
-    time: "15:00 - 17:00",
-    location: "Second Home Lisboa",
-    description: "Open discussion on the state of DAO tooling and governance frameworks.",
-  },
-  {
-    id: 7,
-    title: "Closing Ceremony",
-    date: "2026-07-26",
-    day: "Sunday",
-    time: "20:00 - 00:00",
-    location: "LX Factory",
-    description: "Wrapping up the week with music, food, and final announcements.",
-  },
-]
+type Event = {
+  id: string
+  title: string
+  date: string
+  time: string
+  location: string
+  description: string
+  link: string
+  startDateTime: string
+  endDateTime: string
+}
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
@@ -85,17 +31,93 @@ const getDayDate = (dayName: string) => {
   return dayMap[dayName]
 }
 
-const getFullDate = (dateStr: string, dayName: string) => {
-  const dateObj = new Date(dateStr)
-  const day = dateObj.getUTCDate()
-  return `${dayName}, ${day} July`
+const getDayFromDate = (dateStr: string) => {
+  const date = new Date(dateStr)
+  const dayIndex = date.getDay()
+  const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+  return dayMap[dayIndex]
+}
+
+const formatEventDateTime = (startISO: string, endISO: string) => {
+  const start = new Date(startISO)
+  const end = new Date(endISO)
+
+  const formatDate = (date: Date) => {
+    const month = date.toLocaleString("en-US", { month: "short" })
+    const day = date.getDate()
+    return `${month} ${day}`
+  }
+
+  const formatTime = (date: Date) => {
+    return date.toLocaleString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })
+  }
+
+  return `${formatDate(start)}, ${formatTime(start)} → ${formatDate(end)}, ${formatTime(end)}`
 }
 
 export function EventSchedule() {
+  const [events, setEvents] = useState<Event[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch("/api/events")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          setError(data.error)
+        } else {
+          setEvents(data.events || [])
+        }
+        setLoading(false)
+      })
+      .catch((err) => {
+        setError("Failed to load events")
+        setLoading(false)
+      })
+  }, [])
+
+  if (loading) {
+    return (
+      <div className="px-6 py-12">
+        <p className="text-muted-foreground text-center">Loading events...</p>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="px-6 py-12">
+        <p className="text-destructive text-center">{error}</p>
+      </div>
+    )
+  }
+
+  const filteredEvents = events
+    .filter((e) => {
+      const startDate = new Date(e.startDateTime)
+      const july26End = new Date("2026-07-27T00:00:00")
+      return startDate < july26End
+    })
+    .map((e) => {
+      const startDate = new Date(e.startDateTime)
+      const july20 = new Date("2026-07-20T00:00:00")
+
+      // If event starts before Jul 20, reassign it to Jul 20
+      if (startDate < july20) {
+        return {
+          ...e,
+          date: "2026-07-20",
+        }
+      }
+      return e
+    })
+
   return (
     <div className="space-y-12 px-6">
       {DAYS.map((day) => {
-        const dayEvents = EVENTS.filter((e) => e.day === day)
+        const dayEvents = filteredEvents.filter((e) => getDayFromDate(e.date) === day)
+
         return (
           <div key={day} className="space-y-6">
             <div className="flex items-center gap-4">
@@ -112,29 +134,42 @@ export function EventSchedule() {
                 dayEvents.map((event) => (
                   <div
                     key={event.id}
-                    className="group flex flex-col md:flex-row gap-6 p-6 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors"
+                    className="group flex flex-col md:flex-row gap-6 p-6 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors md:items-center"
                   >
-                    <div className="flex flex-col gap-1 md:w-48 shrink-0 md:border-r md:border-border/50 md:pr-6">
-                      <div className="text-sm font-medium text-foreground">{getFullDate(event.date, event.day)}</div>
-                      <div className="text-sm text-muted-foreground">{event.time}</div>
+                    <div className="flex flex-col gap-1 md:w-64 shrink-0 md:border-r md:border-border/50 md:pr-6">
+                      <div className="text-sm font-medium text-foreground">
+                        {formatEventDateTime(event.startDateTime, event.endDateTime)}
+                      </div>
                     </div>
 
                     <div className="flex-1 space-y-3">
-                      <div className="flex items-start justify-between gap-4">
-                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{event.title}</h3>
-                      </div>
+                      <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{event.title}</h3>
 
-                      <div className="flex items-center gap-2 text-sm text-primary">
-                        <MapPin className="h-4 w-4" />
-                        {event.location}
-                      </div>
+                      {event.location && (
+                        <div className="flex items-center gap-2 text-sm text-primary">
+                          <MapPin className="h-4 w-4" />
+                          {event.location}
+                        </div>
+                      )}
 
-                      <p className="text-muted-foreground">{event.description}</p>
+                      {event.description && <p className="text-muted-foreground">{event.description}</p>}
                     </div>
 
-                    <div className="md:self-center shrink-0 pt-4 md:pt-0">
-                      <Button className="w-full md:w-auto">Register</Button>
-                    </div>
+                    {event.link && (
+                      <div className="shrink-0 pt-4 md:pt-0">
+                        <Button asChild className="w-full md:w-auto">
+                          <a
+                            href={event.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-2"
+                          >
+                            View Event
+                            <ExternalLink className="h-4 w-4" />
+                          </a>
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ))
               )}
