@@ -16,10 +16,20 @@ export function Footer() {
           >
             X
           </Link>
-          <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+          <Link
+            href="https://www.linkedin.com/company/onchain-lisbon"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+          >
             LinkedIn
           </Link>
-          <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors">
+          <Link
+            href="https://luma.com/onchainlisbon"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+          >
             Luma
           </Link>
         </div>
