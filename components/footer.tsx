@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="border-t border-border/40 bg-background py-8">
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground text-center md:text-left">
-          Vibe coded by{" "}
+          Vibe coded with love from Lisbon by{" "}
           <Link
             href="https://x.com/pcbo"
             target="_blank"
@@ -16,33 +16,14 @@ export function Footer() {
           </Link>
         </p>
 
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-muted-foreground">Follow us on:</span>
-          <Link
-            href="https://x.com/onchainlisbon"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-          >
-            X
-          </Link>
-          <Link
-            href="https://www.linkedin.com/company/onchain-lisbon"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-          >
-            LinkedIn
-          </Link>
-          <Link
-            href="https://luma.com/onchainlisbon"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-          >
-            Luma
-          </Link>
-        </div>
+        <Link
+          href="https://x.com/onchainlisbon"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm text-muted-foreground hover:text-primary transition-colors"
+        >
+          Follow us on X
+        </Link>
       </div>
     </footer>
   )
