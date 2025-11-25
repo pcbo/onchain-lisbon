@@ -10,7 +10,7 @@ const geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "Onchain Lisbon Week 2026",
-  description: "The global builder community in Lisbon. A week of talks, hackathons, and Onchain innovation.",
+  description: "Bringing together the builders shipping the future of the web. 20 — 26 July, 2026.",
     generator: 'v0.app'
 }
 
