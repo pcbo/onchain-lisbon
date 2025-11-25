@@ -1,20 +1,15 @@
 import { NextResponse } from "next/server"
+import { unstable_cache } from "next/cache"
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY
 const NOTION_DATABASE_ID = process.env.NOTION_DATABASE_ID
 
-export async function GET() {
-  if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
-    return NextResponse.json(
-      {
-        error:
-          "Missing Notion API credentials. Please add NOTION_API_KEY and NOTION_DATABASE_ID to your environment variables.",
-      },
-      { status: 500 },
-    )
-  }
+const getCachedEvents = unstable_cache(
+  async () => {
+    if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
+      throw new Error("Missing Notion API credentials")
+    }
 
-  try {
     const response = await fetch(`https://api.notion.com/v1/databases/${NOTION_DATABASE_ID}/query`, {
       method: "POST",
       headers: {
@@ -44,23 +39,15 @@ export async function GET() {
       data.results.map(async (page: any) => {
         const props = page.properties
 
-        console.log("[v0] ==================")
-        console.log("[v0] Full page object:", JSON.stringify(page, null, 2))
-
-        console.log("[v0] All property keys:", Object.keys(props))
-
         let title = "Untitled Event"
 
         const titlePropertyKey = Object.keys(props).find((key) => props[key]?.type === "title")
-        console.log("[v0] Found title property key:", titlePropertyKey)
 
         if (titlePropertyKey) {
           const titleProp = props[titlePropertyKey]
-          console.log("[v0] Title property content:", JSON.stringify(titleProp, null, 2))
 
           if (titleProp?.title && Array.isArray(titleProp.title) && titleProp.title.length > 0) {
             title = titleProp.title[0].plain_text || "Untitled Event"
-            console.log("[v0] Successfully extracted title:", title)
           }
         }
 
@@ -78,7 +65,7 @@ export async function GET() {
           id: page.id,
           title,
           date: startDate ? startDate.toISOString().split("T")[0] : "",
-          time: "", // Not used anymore, keeping for compatibility
+          time: "",
           location: "",
           description,
           link: props["Share the event URL"]?.url || "",
@@ -88,6 +75,28 @@ export async function GET() {
       }),
     )
 
+    return events
+  },
+  ["notion-events"],
+  {
+    revalidate: 300, // Cache for 5 minutes
+    tags: ["notion-events"],
+  },
+)
+
+export async function GET() {
+  if (!NOTION_API_KEY || !NOTION_DATABASE_ID) {
+    return NextResponse.json(
+      {
+        error:
+          "Missing Notion API credentials. Please add NOTION_API_KEY and NOTION_DATABASE_ID to your environment variables.",
+      },
+      { status: 500 },
+    )
+  }
+
+  try {
+    const events = await getCachedEvents()
     return NextResponse.json({ events })
   } catch (error) {
     console.error("[v0] Error fetching from Notion:", error)
