@@ -32,8 +32,10 @@ const getDayDate = (dayName: string) => {
 }
 
 const getDayFromDate = (dateStr: string) => {
-  const date = new Date(dateStr)
-  const dayIndex = date.getDay()
+  // Parse as Lisbon timezone to match the event times
+  const date = new Date(dateStr + "T12:00:00")
+  const lisbonDate = new Date(date.toLocaleString("en-US", { timeZone: "Europe/Lisbon" }))
+  const dayIndex = lisbonDate.getDay()
   const dayMap = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
   return dayMap[dayIndex]
 }
@@ -43,13 +45,18 @@ const formatEventDateTime = (startISO: string, endISO: string) => {
   const end = new Date(endISO)
 
   const formatDate = (date: Date) => {
-    const month = date.toLocaleString("en-US", { month: "short" })
-    const day = date.getDate()
+    const month = date.toLocaleString("en-US", { month: "short", timeZone: "Europe/Lisbon" })
+    const day = new Date(date.toLocaleString("en-US", { timeZone: "Europe/Lisbon" })).getDate()
     return `${month} ${day}`
   }
 
   const formatTime = (date: Date) => {
-    return date.toLocaleString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })
+    return date.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: "Europe/Lisbon",
+    })
   }
 
   return `${formatDate(start)}, ${formatTime(start)} → ${formatDate(end)}, ${formatTime(end)}`
