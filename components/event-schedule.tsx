@@ -135,73 +135,75 @@ export function EventSchedule() {
     })
 
   return (
-    <div className="space-y-12 px-6">
-      <p className="text-sm text-muted-foreground mb-4">
-        All times are shown in local Lisbon timezone ({lisbonOffset || "UTC+0/+1"}).
-      </p>
+    <div className="container relative mx-auto px-6">
+      <div className="max-w-4xl space-y-12">
+        <p className="text-sm text-muted-foreground mb-4">
+          All times are shown in local Lisbon timezone ({lisbonOffset || "UTC+0/+1"}).
+        </p>
 
-      {DAYS.map((day) => {
-        const dayEvents = filteredEvents.filter((e) => getDayFromDate(e.date) === day)
+        {DAYS.map((day) => {
+          const dayEvents = filteredEvents.filter((e) => getDayFromDate(e.date) === day)
 
-        return (
-          <div key={day} className="space-y-6">
-            <div className="flex items-center gap-4">
-              <h3 className="text-xl md:text-2xl font-bold text-foreground whitespace-nowrap">
-                {day} <span className="text-muted-foreground font-normal">{getDayDate(day)}</span>
-              </h3>
-              <div className="h-px flex-1 bg-border" />
-            </div>
+          return (
+            <div key={day} className="space-y-6">
+              <div className="flex items-center gap-4">
+                <h3 className="text-xl md:text-2xl font-bold text-foreground whitespace-nowrap">
+                  {day} <span className="text-muted-foreground font-normal">{getDayDate(day)}</span>
+                </h3>
+                <div className="h-px flex-1 bg-border" />
+              </div>
 
-            <div className="space-y-4">
-              {dayEvents.length === 0 ? (
-                <p className="text-muted-foreground italic text-sm">No events scheduled yet.</p>
-              ) : (
-                dayEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    className="group flex flex-col md:flex-row gap-6 p-6 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors md:items-center"
-                  >
-                    <div className="flex flex-col gap-1 md:w-64 shrink-0 md:border-r md:border-border/50 md:pr-6">
-                      <div className="text-sm font-medium text-foreground">
-                        {formatEventDateTime(event.startDateTime, event.endDateTime)}
+              <div className="space-y-4">
+                {dayEvents.length === 0 ? (
+                  <p className="text-muted-foreground italic text-sm">No events scheduled yet.</p>
+                ) : (
+                  dayEvents.map((event) => (
+                    <div
+                      key={event.id}
+                      className="group flex flex-col md:flex-row gap-6 p-6 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors md:items-center"
+                    >
+                      <div className="flex flex-col gap-1 md:w-64 shrink-0 md:border-r md:border-border/50 md:pr-6">
+                        <div className="text-sm font-medium text-foreground">
+                          {formatEventDateTime(event.startDateTime, event.endDateTime)}
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="flex-1 space-y-3">
-                      <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{event.title}</h3>
+                      <div className="flex-1 space-y-3">
+                        <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{event.title}</h3>
 
-                      {event.location && (
-                        <div className="flex items-center gap-2 text-sm text-primary">
-                          <MapPin className="h-4 w-4" />
-                          {event.location}
+                        {event.location && (
+                          <div className="flex items-center gap-2 text-sm text-primary">
+                            <MapPin className="h-4 w-4" />
+                            {event.location}
+                          </div>
+                        )}
+
+                        {event.description && <p className="text-muted-foreground">{event.description}</p>}
+                      </div>
+
+                      {event.link && (
+                        <div className="shrink-0 pt-4 md:pt-0">
+                          <Button asChild className="w-full md:w-auto">
+                            <a
+                              href={event.link}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2"
+                            >
+                              View Event
+                              <ExternalLink className="h-4 w-4" />
+                            </a>
+                          </Button>
                         </div>
                       )}
-
-                      {event.description && <p className="text-muted-foreground">{event.description}</p>}
                     </div>
-
-                    {event.link && (
-                      <div className="shrink-0 pt-4 md:pt-0">
-                        <Button asChild className="w-full md:w-auto">
-                          <a
-                            href={event.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2"
-                          >
-                            View Event
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                ))
-              )}
+                  ))
+                )}
+              </div>
             </div>
-          </div>
-        )
-      })}
+          )
+        })}
+      </div>
     </div>
   )
 }
