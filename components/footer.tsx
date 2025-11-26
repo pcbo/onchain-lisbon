@@ -5,7 +5,7 @@ export function Footer() {
     <footer className="border-t border-border/40 bg-background py-8">
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground text-center md:text-left">
-          Vibe coded with love from Lisbon by{" "}
+          Vibe coded from Lisbon by{" "}
           <Link
             href="https://x.com/pcbo"
             target="_blank"
