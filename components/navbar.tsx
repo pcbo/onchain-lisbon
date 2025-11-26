@@ -8,7 +8,7 @@ export function Navbar() {
       <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-6">
         <Link href="https://onchainlisbon.com" className="flex items-center gap-3">
           <Image src="/logo.png" alt="Onchain Lisbon" width={180} height={60} className="h-10 w-auto" priority />
-          <span className="text-xl font-bold">Onchain Lisbon Week 2026</span>
+          <span className="hidden text-xl font-bold md:inline">Onchain Lisbon Week 2026</span>
         </Link>
 
         <div className="flex items-center gap-4">
