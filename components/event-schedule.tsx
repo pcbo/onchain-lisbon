@@ -18,6 +18,16 @@ type Event = {
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
 
+const DAY_DATES: Record<string, string> = {
+  Monday: "2026-07-20",
+  Tuesday: "2026-07-21",
+  Wednesday: "2026-07-22",
+  Thursday: "2026-07-23",
+  Friday: "2026-07-24",
+  Saturday: "2026-07-25",
+  Sunday: "2026-07-26",
+}
+
 const getDayDate = (dayName: string) => {
   const dayMap: Record<string, string> = {
     Monday: "(20 July)",
@@ -60,6 +70,19 @@ const formatEventDateTime = (startISO: string, endISO: string) => {
   }
 
   return `${formatDate(start)}, ${formatTime(start)} → ${formatDate(end)}, ${formatTime(end)}`
+}
+
+const eventSpansDay = (event: Event, dayDateStr: string) => {
+  // Parse event start and end in Lisbon timezone
+  const eventStart = new Date(event.startDateTime)
+  const eventEnd = new Date(event.endDateTime)
+
+  // Create day boundaries in Lisbon timezone
+  const dayStart = new Date(dayDateStr + "T00:00:00+01:00") // Lisbon is UTC+1 in July (DST)
+  const dayEnd = new Date(dayDateStr + "T23:59:59+01:00")
+
+  // Event spans this day if it starts before day ends AND ends after day starts
+  return eventStart <= dayEnd && eventEnd >= dayStart
 }
 
 export function EventSchedule() {
@@ -122,24 +145,11 @@ export function EventSchedule() {
     )
   }
 
-  const filteredEvents = events
-    .filter((e) => {
-      const startDate = new Date(e.startDateTime)
-      const july26End = new Date("2026-07-27T00:00:00")
-      return startDate < july26End
-    })
-    .map((e) => {
-      const startDate = new Date(e.startDateTime)
-      const july20 = new Date("2026-07-20T00:00:00")
-
-      if (startDate < july20) {
-        return {
-          ...e,
-          date: "2026-07-20",
-        }
-      }
-      return e
-    })
+  const filteredEvents = events.filter((e) => {
+    const startDate = new Date(e.startDateTime)
+    const july26End = new Date("2026-07-27T00:00:00")
+    return startDate < july26End
+  })
 
   return (
     <div className="container relative mx-auto px-6">
@@ -149,7 +159,7 @@ export function EventSchedule() {
         </p>
 
         {DAYS.map((day) => {
-          const dayEvents = filteredEvents.filter((e) => getDayFromDate(e.date) === day)
+          const dayEvents = filteredEvents.filter((e) => eventSpansDay(e, DAY_DATES[day]))
 
           return (
             <div key={day} className="space-y-6">
