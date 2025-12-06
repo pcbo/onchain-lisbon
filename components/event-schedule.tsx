@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { MapPin, ExternalLink, ChevronDown } from "lucide-react"
+import { MapPin, ExternalLink } from "lucide-react"
 import { useEffect, useState } from "react"
 
 type Event = {
@@ -90,7 +90,6 @@ export function EventSchedule() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lisbonOffset, setLisbonOffset] = useState<string>("")
-  const [afterWeekExpanded, setAfterWeekExpanded] = useState(false)
 
   useEffect(() => {
     const calculateLisbonOffset = () => {
@@ -146,36 +145,11 @@ export function EventSchedule() {
     )
   }
 
-  const mainWeekEvents = events.filter((e) => {
+  const filteredEvents = events.filter((e) => {
     const startDate = new Date(e.startDateTime)
-    const july27Start = new Date("2026-07-27T00:00:00+01:00")
-    return startDate < july27Start
+    const july26End = new Date("2026-07-27T00:00:00")
+    return startDate < july26End
   })
-
-  const afterWeekEvents = events.filter((e) => {
-    const endDate = new Date(e.endDateTime)
-    const july27Start = new Date("2026-07-27T00:00:00+01:00")
-    return endDate >= july27Start
-  })
-
-  const formatPostWeekDateRange = (startISO: string, endISO: string) => {
-    const start = new Date(startISO)
-    const end = new Date(endISO)
-
-    const formatDate = (date: Date) => {
-      const day = date.toLocaleString("en-US", { day: "numeric", timeZone: "Europe/Lisbon" })
-      const month = date.toLocaleString("en-US", { month: "long", timeZone: "Europe/Lisbon" })
-      return `${day} ${month}`
-    }
-
-    const startStr = formatDate(start)
-    const endStr = formatDate(end)
-
-    if (startStr === endStr) {
-      return startStr
-    }
-    return `${startStr} — ${endStr}`
-  }
 
   return (
     <div className="container relative mx-auto px-6">
@@ -185,7 +159,7 @@ export function EventSchedule() {
         </p>
 
         {DAYS.map((day) => {
-          const dayEvents = mainWeekEvents.filter((e) => eventSpansDay(e, DAY_DATES[day]))
+          const dayEvents = filteredEvents.filter((e) => eventSpansDay(e, DAY_DATES[day]))
 
           return (
             <div key={day} className="space-y-6">
@@ -246,71 +220,6 @@ export function EventSchedule() {
             </div>
           )
         })}
-
-        {afterWeekEvents.length > 0 && (
-          <div className="space-y-6 pt-8 border-t border-border/50">
-            <button
-              onClick={() => setAfterWeekExpanded(!afterWeekExpanded)}
-              className="w-full flex items-center gap-4 group cursor-pointer"
-            >
-              <h3 className="text-xl md:text-2xl font-bold text-muted-foreground group-hover:text-foreground transition-colors whitespace-nowrap">
-                After the Week
-              </h3>
-              <div className="h-px flex-1 bg-border" />
-              <ChevronDown
-                className={`h-5 w-5 text-muted-foreground group-hover:text-foreground transition-all ${
-                  afterWeekExpanded ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            {afterWeekExpanded && (
-              <div className="space-y-4">
-                {afterWeekEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    className="group flex flex-col md:flex-row gap-6 p-6 rounded-lg border border-border bg-card hover:border-primary/50 transition-colors md:items-center"
-                  >
-                    <div className="flex flex-col gap-1 md:w-64 shrink-0 md:border-r md:border-border/50 md:pr-6">
-                      <div className="text-sm font-medium text-foreground">
-                        {formatPostWeekDateRange(event.startDateTime, event.endDateTime)}
-                      </div>
-                    </div>
-
-                    <div className="flex-1 space-y-3">
-                      <h3 className="text-xl font-bold group-hover:text-primary transition-colors">{event.title}</h3>
-
-                      {event.location && (
-                        <div className="flex items-center gap-2 text-sm text-primary">
-                          <MapPin className="h-4 w-4" />
-                          {event.location}
-                        </div>
-                      )}
-
-                      {event.description && <p className="text-muted-foreground">{event.description}</p>}
-                    </div>
-
-                    {event.link && (
-                      <div className="shrink-0 pt-4 md:pt-0">
-                        <Button asChild className="w-full md:w-auto">
-                          <a
-                            href={event.link}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-2"
-                          >
-                            View Event
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   )
