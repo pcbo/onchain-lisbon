@@ -1,13 +1,26 @@
-"use client"
+import { Calendar, MapPin, ArrowUpRight } from "lucide-react"
 
-import { Calendar, MapPin } from "lucide-react"
-import { useState } from "react"
+const socialLinks = [
+  {
+    label: "Follow on X",
+    handle: "@onchainlisbon",
+    href: "https://x.com/onchainlisbon",
+  },
+  {
+    label: "Follow on LinkedIn",
+    handle: "Onchain Lisbon",
+    href: "https://linkedin.com/company/onchain-lisbon",
+  },
+  {
+    label: "Follow on Luma",
+    handle: "onchainlisbon",
+    href: "https://luma.com/onchainlisbon",
+  },
+]
 
 export function Hero() {
-  const [isHovered, setIsHovered] = useState(false)
-
   return (
-    <section className="relative w-full py-12 md:py-16 lg:py-20 overflow-hidden bg-background">
+    <section className="relative w-full py-12 md:py-16 lg:py-24 overflow-hidden bg-background">
       {/* Abstract Background Pattern */}
       <div className="absolute inset-0 z-0 opacity-10">
         <div className="absolute inset-0 bg-[radial-gradient(#374151_1px,transparent_1px)] [background-size:24px_24px]" />
@@ -19,7 +32,7 @@ export function Hero() {
           <div className="flex flex-wrap items-center gap-4 text-primary font-mono text-sm tracking-widest uppercase">
             <span className="flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              July 20-26, 2026
+              That's a wrap · 2026
             </span>
             <span className="h-1 w-1 rounded-full bg-muted-foreground" />
             <span className="flex items-center gap-2">
@@ -28,42 +41,38 @@ export function Hero() {
             </span>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-foreground leading-[1.1]">
-            THE ONCHAIN <br />
-            BUILDER WEEK <br />
-            <span
-              className="inline-block cursor-default relative"
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}
-            >
-              IN{" "}
-              <span className="relative inline-block">
-                {/* LISBON text */}
-                <span
-                  className={`inline-block transition-all duration-1000 ease-in-out ${
-                    isHovered ? "opacity-0 translate-y-2" : "opacity-100 translate-y-0"
-                  }`}
-                  style={{ position: isHovered ? "absolute" : "relative", left: 0, top: 0 }}
-                >
-                  LISBON
-                </span>
-                {/* Lisboa text */}
-                <span
-                  className={`inline-block transition-all duration-1000 ease-in-out ${
-                    isHovered ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-                  }`}
-                  style={{ position: isHovered ? "relative" : "absolute", left: 0, top: 0 }}
-                >
-                  Lisboa
-                </span>
-              </span>
-            </span>
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tighter text-foreground leading-[1.1] text-balance">
+            OBRIGADO, <br />
+            LISBON.
           </h1>
 
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl leading-relaxed text-balance">
-            Lisbon's builder calendar for one powerful week. Every event, curated in a single place, created by and for
-            those who are shipping onchain.
+            Onchain Lisbon Week 2026 has come to a close. Thank you to every builder, host, and dreamer who made one
+            powerful week possible. We&apos;ll be back — and the next edition is already on the horizon.
           </p>
+
+          <div className="flex flex-col gap-4 pt-2">
+            <p className="font-mono text-sm tracking-widest uppercase text-muted-foreground">
+              Stay tuned for 2027
+            </p>
+            <div className="grid gap-3 sm:grid-cols-3 max-w-2xl">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.href}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-between gap-3 rounded-lg border border-border bg-card px-5 py-4 transition-colors hover:border-foreground/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+                >
+                  <span className="flex flex-col">
+                    <span className="text-sm font-semibold text-card-foreground">{social.label}</span>
+                    <span className="text-xs text-muted-foreground">{social.handle}</span>
+                  </span>
+                  <ArrowUpRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-foreground" />
+                </a>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </section>
