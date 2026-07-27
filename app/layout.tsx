@@ -9,12 +9,12 @@ const geistSans = Geist({ subsets: ["latin"] })
 const geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Onchain Lisbon Week 2026",
-  description: "Bringing together the builders shipping the future of the web. 20 — 26 July, 2026.",
+  title: "Onchain Lisbon Week",
+  description: "Onchain Lisbon Week 2026 has wrapped. Follow along for news about the next edition in Lisbon.",
   icons: {
     icon: "/favicon.png",
   },
-    generator: 'v0.app'
+  generator: "v0.app",
 }
 
 export default function RootLayout({
@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className="dark bg-background">
       <body className={`${geistSans.className} min-h-screen flex flex-col`}>
         <Navbar />
         <main className="flex-1">{children}</main>
